@@ -1,19 +1,13 @@
 <script setup>
-  import Login from './view/Login.vue'
-  import SignUp from './view/SignUp.vue'
-  import JobList from './view/JobList.vue'
-  import JobDetail from './view/JobDetail.vue'
-  import UserProfile from './view/UserProfile.vue'
 
 </script>
 
 <template>
-  <div>
-    <h1>Vue3 Job</h1>
-    <Login />
-    <SignUp />
-
-  </div>
+  <!-- 
+    Router View : 
+    라우터가 연결되는 주소의 페이지 표시  
+  -->
+  <router-view/>
 </template>
 
 <style scoped lang="scss">
