@@ -1,11 +1,21 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+  import Login from './view/Login.vue'
+  import SignUp from './view/SignUp.vue'
+  import JobList from './view/JobList.vue'
+  import JobDetail from './view/JobDetail.vue'
+  import UserProfile from './view/UserProfile.vue'
+
 </script>
 
 <template>
-  <h1>App</h1>
+  <div>
+    <h1>Vue3 Job</h1>
+    <Login />
+    <SignUp />
+
+  </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 
 </style>
