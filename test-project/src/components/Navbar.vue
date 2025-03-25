@@ -24,6 +24,36 @@
                 style="color: #1e1e1e;"
                 />
             </router-link>
+
+            <div class="left-icons" v-if="currentPath === '/job-detail' || currentPath === '/user-profile'">
+                <router-link to="/job-list">
+                    <Icon 
+                    icon="ic:baseline-arrow-back"
+                    width="24"
+                    height="24"
+                    style="color: #1e1e1e;"
+                    />
+                </router-link>
+            </div>
+
+            <div class="right-icons" v-if="currentPath === '/job-list'">
+                <router-link to="/user-profile">
+                    <Icon 
+                    icon="teenyicons:user-circle-solid"
+                    width="24"
+                    height="20"
+                    style="color: #1e1e1e;"
+                    />
+                </router-link>
+                <router-link to="/job-post">
+                    <Icon 
+                    icon="mdi:pencil-outline"
+                    width="24"
+                    height="20"
+                    style="color: #1e1e1e;"
+                    />
+                </router-link>
+            </div>
         </nav>
     </div>
 </template>
@@ -79,4 +109,20 @@
             text-decoration: none;
         }
     } 
+
+    .left-icons {
+        position: absolute;
+        left: 15px;
+        top: 10px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .right-icons {
+        position: absolute;
+        right: 15px;
+        top: 10px;
+        display: flex;
+        gap: 10px;
+    }
 </style>

@@ -18,7 +18,7 @@
 }
 
 *, *::before, *::after {
-  font-family: 'Noto Sans KR' sans-serif!important;
+  font-family: "Noto Sans KR", sans-serif;
 }
 
 body {
@@ -30,7 +30,7 @@ body {
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-family: 'Noto Sans KR' sans-serif!important;
+  font-family: "Noto Sans KR", sans-serif;
   color: var(--text-color-dark);
 }
 
