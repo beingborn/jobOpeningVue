@@ -46,18 +46,29 @@
 </template>
 <script setup>
     import {ref} from 'vue';
+    import supabase from '../supabase';
 
     const email = ref('');
     const password = ref('');
     const tel = ref('');
     const text = ref('');
 
-    const handleSignup = () => {
-        console.log(email.value)
-        console.log(password.value)
-        console.log(tel.value)
-        console.log(text.value)
+    
+
+    const handleSignup = async () => {
+        const { data, error } = await supabase.auth.signUp({
+            email: email.value,
+            password: password.value,
+        })
+
+        if (error){
+            alert(error.message)
+        } else {
+            console.log('회원가입 성공')
+        }
     }
+
+
 
 </script>
 <style lang="scss">
