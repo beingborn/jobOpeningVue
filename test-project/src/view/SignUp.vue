@@ -1,5 +1,8 @@
 <template>
     <div>
+        <div class="loading-info" v-if="isLoading === true">
+            <p>회원가입 처리중...</p>
+        </div>
         <h1>SignUp</h1>
         <div class="form-container">
             <form @submit.prevent="handleSignup">
@@ -44,13 +47,13 @@
                     >
                 </div>
                 <div class="form-group">
-                    <label for="address">Address</label>
+                    <label for="addr">Address</label>
                     <input 
                     type="text"
-                    id="address" 
+                    id="addr" 
                     placeholder="주소 입력"
                     required
-                    v-model="address"
+                    v-model="addr"
                     >
                 </div>
                 <div class="form-group">
@@ -65,17 +68,22 @@
     </div>
 </template>
 <script setup>
+    import {useRouter} from 'vue-router';
     import {ref} from 'vue';
     import supabase from '../supabase';
 
+    const router = useRouter();
     const email = ref('');
     const password = ref('');
     const tel = ref('');
     const text = ref('');
     const name = ref('');
-    const address = ref('');
+    const addr = ref('');
+    const isLoading = ref(false);
 
     const handleSignup = async () => {
+        isLoading.value = true; // 서버 요청 시작
+
         const { data, error } = await supabase.auth.signUp({
             email: email.value,
             password: password.value,
@@ -96,11 +104,15 @@
                     tel : tel.value,
                     text : text.value,
                     name : name.value,
-                    address : address.value
+                    address : addr.value
                 })
 
                 if (error) {
                     alert(error.message)
+                } else {
+                    isLoading.value = false; // 서버 요청 완료
+                    alert('회원가입 성공')
+                    router.push('/');
                 }
         }
     }
@@ -110,4 +122,14 @@
 </script>
 <style lang="scss">
     @use '../style/form.scss';
+
+    .loading-info {
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.7);
+        color: #fff;
+        display: grid;
+        place-items: center;
+    }
 </style>

@@ -1,5 +1,8 @@
 <template>
     <div>
+        <div class="loading-info" v-if="isLoading === true">
+            <p>로그인 처리중...</p>
+        </div>
         <h1>login</h1>
         <div class="form-container">
             <!-- 
@@ -35,17 +38,45 @@
 </template>
 <script setup>
     // 상태변수
+    import {useRouter} from 'vue-router';
     import {ref} from 'vue';
+    import supabase from '../supabase';
+
+    const router = useRouter();
+    const isLoading = ref(false);
 
     const email = ref('');
     const password = ref('');
 
-    const handleLogin = () => {
-        console.log(email.value)
-        console.log(password.value)
+    const handleLogin = async () => {
+        isLoading.value = true; // 서버 요청 시작
+
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email.value,
+            password: password.value,
+        })
+
+        if (error){
+            alert(error.message)
+        } else {
+            alert('로그인 성공')
+            console.log(data)
+            isLoading.value = false;
+            router.push('/job-list')
+        }
     }
 
 </script>
 <style lang="scss">
     @use '../style/form.scss';
+
+    .loading-info {
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.7);
+        color: #fff;
+        display: grid;
+        place-items: center;
+    }
 </style>
