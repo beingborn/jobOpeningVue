@@ -58,6 +58,7 @@
 
         if (error){
             alert(error.message)
+            isLoading.value = false;
         } else {
             alert('로그인 성공')
             console.log(data)

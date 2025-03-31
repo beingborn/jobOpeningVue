@@ -82,6 +82,7 @@
     const isLoading = ref(false);
 
     const handleSignup = async () => {
+
         isLoading.value = true; // 서버 요청 시작
 
         const { data, error } = await supabase.auth.signUp({
@@ -108,6 +109,8 @@
                 })
 
                 if (error) {
+                    isLoading.value = false;
+
                     alert(error.message)
                 } else {
                     isLoading.value = false; // 서버 요청 완료
