@@ -1,5 +1,5 @@
 <template>
-    <div class="form-container">
+    <div class="form-container" v-if="isLogin">
         <form>
             <!-- 제목 -->
             <div class="form-group">
@@ -104,9 +104,16 @@
 </template>
 
 <script setup>
+    import supabase from '../supabase';
+    import { useAuth } from '../auth/auth.js'
+
     import {ref} from 'vue';
     import { Icon } from '@iconify/vue'
+    import { onMounted } from 'vue';
+    import { useRouter } from 'vue-router';
 
+    // const router = useRouter()
+    // const isLogin = ref(false)
     const title = ref('')
     const todo = ref('')
     const pay_rule = ref('')
@@ -116,24 +123,41 @@
     const location = ref('')
     const tel = ref('')
 
+    // 반환 값 가져오기
+    const {isLogin, user, checkLoginStatus} = useAuth();
+
+    console.log(isLogin.value)
+
+    // 마운트 시 로그인 확인 함수 가져오기 
+    // 해당 함수는 정의된 const 변수 값을 설정해주는 역할을 함
+    onMounted( async() => {
+        // 마운트 시 useAuth 내부의 checkLogin 실행
+        await checkLoginStatus();
+
+        // ref 값 = value로 확인
+        // console.log('auth 정보' , isLogin.value)
+        // console.log('유저 정보' , user.value)
+    })
+
 </script>
 
 <style lang="scss" scoped>
     @use "../style/form.scss";
 
     .form-container {
-    margin-top: 20px;
-    padding-bottom: 50px;
+        margin-top: 20px;
+        padding-bottom: 50px;
 
         .tab-group {
             display: flex;
             gap: 15px;
+
             label { 
-            flex: 1;
-            border: 1px solid var(--main-color-dark);
-            border-radius: 8px;
-            text-align: center;
-            padding: 12px;
+                flex: 1;
+                border: 1px solid var(--main-color-dark);
+                border-radius: 8px;
+                text-align: center;
+                padding: 12px;
             }
         }
 
@@ -160,26 +184,29 @@
 
         //file 아이콘
         label[for=photo] {
+
             figure { 
-            display: flex; 
-            align-items: center;
-            img { 
-                border: 1px solid red;
-                margin-left: 30px; 
-            }
+                display: flex; 
+                align-items: center;
+
+                img { 
+                    border: 1px solid red;
+                    margin-left: 30px; 
+                }
             }
         }
+
         input[type="file"] {
             display: none;
         }
     }
 
     .btn-submit {
-    background: var(--main-color-light);
+        background: var(--main-color-light);
     }
 
     .form-group:has(label[for=photo]) {
-    padding-bottom: 25px;
-    border-bottom: 5px solid #ccc;
+        padding-bottom: 25px;
+        border-bottom: 5px solid #ccc;
     }
 </style>

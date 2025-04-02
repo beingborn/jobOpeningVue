@@ -24,8 +24,7 @@
     import supabase from '../supabase';
     
     // LifeCycle Hook
-    import { ref } from 'vue';
-    import { onMounted } from 'vue';
+    import { ref, onMounted } from 'vue';
     import { useRouter } from 'vue-router'
 
     const router = useRouter()
