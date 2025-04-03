@@ -1,6 +1,6 @@
 <template>
     <div class="form-container" v-if="isLogin">
-        <form>
+        <form @submit.prevent="handleSubmit">
             <!-- 제목 -->
             <div class="form-group">
                 <label for="title">제목</label>
@@ -91,14 +91,25 @@
                     <p class="title">사진(선택)</p>
                     <figure>
                         <Icon icon="mdi-light:camera" width="64" height="64" style="color: #1e1e1e;" ></Icon>
-                        <img src="/box64.jpg" alt="미리보기" width="64" height="64"/>
+                        <img :src="
+                        previewImage == null ? '/box64.jpg' : previewImage" 
+                        alt="미리보기" 
+                        width="64"
+                        height="64"
+                        fill=""
+                        />
                     </figure>
                 </label>
                 <!-- 
                     accept = image만 only
                 -->
-                <input type="file" id="photo" accept="image/*">
+                <input 
+                @change="onFileChange"
+                type="file"
+                id="photo"
+                accept="image/*">
             </div>
+            <button class="btn-submit">등록하기</button>
         </form>
     </div>
 </template>
@@ -107,7 +118,7 @@
     import supabase from '../supabase';
     import { useAuth } from '../auth/auth.js'
 
-    import {ref} from 'vue';
+    import {onUnmounted, ref} from 'vue';
     import { Icon } from '@iconify/vue'
     import { onMounted } from 'vue';
     import { useRouter } from 'vue-router';
@@ -122,11 +133,36 @@
     const company_name = ref('')
     const location = ref('')
     const tel = ref('')
+    
+    const previewImage = ref(null);
 
     // 반환 값 가져오기
     const {isLogin, user, checkLoginStatus} = useAuth();
 
-    console.log(isLogin.value)
+    const router = useRouter();
+
+    const handleSubmit = async() => {
+        const { error } = await supabase
+        .from('job_posts')
+        .insert({
+            title : title.value,
+            todo : todo.value,
+            pay_rule : pay_rule.value,
+            pay : pay.value,
+            desc : desc.value,
+            company_name : company_name.value,
+            location : location.value,
+            tel : tel.value,
+            img_url: previewImage.value
+        })
+
+        if (error) {
+            alert(error.message)
+        } else {
+            alert('등록이 완료되었습니다.')
+            router.push('/job-list');
+        }
+    }
 
     // 마운트 시 로그인 확인 함수 가져오기 
     // 해당 함수는 정의된 const 변수 값을 설정해주는 역할을 함
@@ -138,6 +174,24 @@
         // console.log('auth 정보' , isLogin.value)
         // console.log('유저 정보' , user.value)
     })
+
+    // 페이지 종료 시
+    onUnmounted(()=> {
+        console.log('unonmounted')
+        // 메모리 누수 방지
+        if (previewImage.value) {
+            URL.revokeObjectURL(previewImage.value);
+        }
+    })
+
+    const onFileChange = (event) => {
+        const file = event.target.files[0];
+
+        if (file) {
+            previewImage.value = URL.createObjectURL(file);
+        }
+    }
+
 
 </script>
 

@@ -1,5 +1,4 @@
 // 인증 외부 모듈 분리
-
 import { useRouter } from 'vue-router'
 import supabase from '../supabase';
 import { ref } from 'vue';
