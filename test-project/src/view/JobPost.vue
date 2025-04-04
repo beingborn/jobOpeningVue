@@ -1,4 +1,7 @@
 <template>
+    <div class="loading_info" v-if="isLoading">
+        <p>저장중...</p>
+    </div>
     <div class="form-container" v-if="isLogin">
         <form @submit.prevent="handleSubmit">
             <!-- 제목 -->
@@ -124,7 +127,7 @@
     import { useRouter } from 'vue-router';
 
     // const router = useRouter()
-    // const isLogin = ref(false)
+    const isLoading = ref(false)
     const title = ref('')
     const todo = ref('')
     const pay_rule = ref('')
@@ -142,6 +145,8 @@
     const router = useRouter();
 
     const handleSubmit = async() => {
+        isLoading.value = true;
+
         const { error } = await supabase
         .from('job_posts')
         .insert({
@@ -153,13 +158,14 @@
             company_name : company_name.value,
             location : location.value,
             tel : tel.value,
-            img_url: previewImage.value
+            img_url: previewImage.value,
         })
 
         if (error) {
-            alert(error.message)
+            alert(error.message);
         } else {
-            alert('등록이 완료되었습니다.')
+            isLoading.value = false;
+            alert('등록이 완료되었습니다.');
             router.push('/job-list');
         }
     }
