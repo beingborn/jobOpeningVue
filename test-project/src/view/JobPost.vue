@@ -1,120 +1,124 @@
 <template>
-    <div class="loading_info" v-if="isLoading">
-        <p>저장중...</p>
-    </div>
-    <div class="form-container" v-if="isLogin">
-        <form @submit.prevent="handleSubmit">
-            <!-- 제목 -->
-            <div class="form-group">
-                <label for="title">제목</label>
-                <input 
-                type="text"
-                id="title"
-                required
-                placeholder="공고 내용을 요약해 주세요."
-                v-model="title"
-                >
-            </div>
-            <!-- 하는 일 -->
-            <div class="form-group">
-                <label for="todo">하는 일</label>
-                <input 
-                type="text"
-                id="todo"
-                required
-                placeholder="해야할 업무를 입력해주세요."
-                v-model="todo"
-                >
-            </div>
-            <!-- 3. 급여 조건 -->
-            <div class="form-group">
-                <input type="radio" name="pay_rule" id="pay_rule1" value="시급" v-model="pay_rule" required checked>
-                <input type="radio" name="pay_rule" id="pay_rule2" value="월급" v-model="pay_rule" required>
-                <div class="tab-group">
-                    <label for="pay_rule1">시급</label>
-                    <label for="pay_rule2">월급</label>
+    <div>
+        <div class="loading_info" v-if="isLoading">
+            <p>저장중...</p>
+        </div>
+        <div class="form-container" v-if="isLogin">
+            <form @submit.prevent="handleSubmit">
+                <!-- 제목 -->
+                <div class="form-group">
+                    <label for="title">제목</label>
+                    <input 
+                    type="text"
+                    id="title"
+                    required
+                    placeholder="공고 내용을 요약해 주세요."
+                    v-model="title"
+                    >
                 </div>
-                <!-- 4. 금액 입력 -->
-                <input 
-                type="number" 
-                id="pay" 
-                placeholder="시급 또는 월급을 입력해주세요."
-                v-model="pay" 
-                required
-                >
-            </div>
-            <!-- 5. 자세한 설명 -->
-            <div class="form-group">
-                <label for="desc">자세한 설명</label>
-                <textarea 
-                name="desc" 
-                id="desc" 
-                v-model="desc"
-                rows="4"
-                required
-                placeholder="구체적인 업무 내용, 근무여건, 지원자가 갖추어야 할 능력 등을 기입해주세요."
-                ></textarea>
-            </div>
-            <!-- 6. 업체명 -->
-            <div class="form-group">
-                <label for="company_name">업체명</label>
-                <input
-                type="text"
-                id="company_name"
-                v-model="company_name"
-                required
-                placeholder="예) 땅콩가게"
-                >
-            </div>
-            <!-- 7. 위치 (주소) -->
-            <div class="form-group">
-                <label for="location">위치</label>
-                <input
-                type="text"
-                id="location"
-                v-model="location"
-                required
-                placeholder="예) 서울시 강남구 논현동"
-                >
-            </div>
-            <!-- 8. 연락처 -->
-            <div class="form-group">
-                <label for="tel">연락처</label>
-                <input
-                type="text"
-                id="tel"
-                v-model="tel"
-                required
-                placeholder="예) 01084230876"
-                >
-            </div>
-            <!-- 9. 사진(선택입력) -->
-            <div class="form-group">
-                <label for="photo">
-                    <p class="title">사진(선택)</p>
-                    <figure>
-                        <Icon icon="mdi-light:camera" width="64" height="64" style="color: #1e1e1e;" ></Icon>
-                        <img :src="
-                        previewImage == null ? '/box64.jpg' : previewImage" 
-                        alt="미리보기" 
-                        width="64"
-                        height="64"
-                        fill=""
-                        />
-                    </figure>
-                </label>
-                <!-- 
-                    accept = image만 only
-                -->
-                <input 
-                @change="onFileChange"
-                type="file"
-                id="photo"
-                accept="image/*">
-            </div>
-            <button class="btn-submit">등록하기</button>
-        </form>
+                <!-- 하는 일 -->
+                <div class="form-group">
+                    <label for="todo">하는 일</label>
+                    <input 
+                    type="text"
+                    id="todo"
+                    required
+                    placeholder="해야할 업무를 입력해주세요."
+                    v-model="todo"
+                    >
+                </div>
+                <!-- 3. 급여 조건 -->
+                <div class="form-group">
+                    <input type="radio" name="pay_rule" id="pay_rule1" value="시급" v-model="pay_rule" required checked>
+                    <input type="radio" name="pay_rule" id="pay_rule2" value="월급" v-model="pay_rule" required>
+                    <div class="tab-group">
+                        <label for="pay_rule1">시급</label>
+                        <label for="pay_rule2">월급</label>
+                    </div>
+                    <!-- 4. 금액 입력 -->
+                    <input 
+                    type="number" 
+                    id="pay" 
+                    placeholder="시급 또는 월급을 입력해주세요."
+                    v-model="pay" 
+                    required
+                    >
+                </div>
+                <!-- 5. 자세한 설명 -->
+                <div class="form-group">
+                    <label for="desc">자세한 설명</label>
+                    <textarea 
+                    name="desc" 
+                    id="desc" 
+                    v-model="desc"
+                    rows="4"
+                    required
+                    placeholder="구체적인 업무 내용, 근무여건, 지원자가 갖추어야 할 능력 등을 기입해주세요."
+                    ></textarea>
+                </div>
+                <!-- 6. 업체명 -->
+                <div class="form-group">
+                    <label for="company_name">업체명</label>
+                    <input
+                    type="text"
+                    id="company_name"
+                    v-model="company_name"
+                    required
+                    placeholder="예) 땅콩가게"
+                    >
+                </div>
+                <!-- 7. 위치 (주소) -->
+                <div class="form-group">
+                    <label for="location">위치</label>
+                    <input
+                    type="text"
+                    id="location"
+                    v-model="location"
+                    required
+                    placeholder="예) 서울시 강남구 논현동"
+                    >
+                </div>
+                <!-- 8. 연락처 -->
+                <div class="form-group">
+                    <label for="tel">연락처</label>
+                    <input
+                    type="text"
+                    id="tel"
+                    v-model="tel"
+                    required
+                    placeholder="예) 01084230876"
+                    >
+                </div>
+                <!-- 9. 사진(선택입력) -->
+                <div class="form-group">
+                    <label for="photo">
+                        <p class="title">사진(선택)</p>
+                        <figure>
+                            <Icon icon="mdi-light:camera" width="64" height="64" style="color: #1e1e1e;" ></Icon>
+                            <img :src="
+                            previewImage == null ? '/box64.jpg' : previewImage" 
+                            alt="미리보기" 
+                            width="64"
+                            height="64"
+                            fill=""
+                            />
+                        </figure>
+                    </label>
+                    <!-- 
+                        accept = image만 only
+                    -->
+                    <input 
+                    @change="onFileChange"
+                    type="file"
+                    id="photo"
+                    accept="image/*">
+                </div>
+                <button class="btn-submit">등록하기</button>
+            </form>
+        </div>
     </div>
+
+
 </template>
 
 <script setup>
