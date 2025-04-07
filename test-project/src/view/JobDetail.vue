@@ -1,6 +1,7 @@
 <template>
     <div>
         <h1>JobDetail</h1>
+        {{ detail }}
     </div>
 </template>
 <script setup>
@@ -11,12 +12,15 @@
         
     const route = useRoute();
 
+    const detail = ref([])
+
     onMounted( async() => {
         const { data , error } = await supabase
         .from('job_posts')
-        .select('id')
+        .select()
         .eq('id', route.params.id)
 
+        detail.value = data
 
         if (error) {
             console.log("데이터없음")
