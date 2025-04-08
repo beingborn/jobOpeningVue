@@ -12,10 +12,8 @@
             <h1>{{ title }}</h1>
             <router-link 
             v-if="
-            currentPath === '/' || 
-            currentPath === '/signup' || 
-            currentPath === '/job-post'"
-            to="/joblist"
+            currentPath === '/' || currentPath === '/signup' || currentPath === '/job-post'"
+            to="/job-list"
             class="btn-close">
                 <Icon 
                 icon="material-symbols:close"
@@ -66,11 +64,11 @@
     let currentPath = route.path;    
     let title = ref('');
 
+
     // Watch == 특정 변수의 변경을 감지하는 훅
     // newPath == 변경되는 경로 명
     watch(route, (newPath) => {
         currentPath = newPath.path;
-        console.log(currentPath)
 
         // 경로별로 제목을 다르게 설정
         if(currentPath === '/') {
