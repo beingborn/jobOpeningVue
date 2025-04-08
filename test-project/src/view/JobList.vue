@@ -39,7 +39,6 @@
         if (error) {
             alert(error.message)
         } else {
-            console.log(data)
             // 둘다 배열이기 때문에 value = data값으로 추가 가능
             posts.value = data;
         }

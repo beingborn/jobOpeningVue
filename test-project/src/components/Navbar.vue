@@ -23,7 +23,7 @@
                 />
             </router-link>
 
-            <div class="left-icons" v-if="currentPath === '/job-detail' || currentPath === '/user-profile'">
+            <div class="left-icons" v-if="currentPath.startsWith('/job-detail') || currentPath === '/user-profile'">
                 <router-link to="/job-list">
                     <Icon 
                     icon="ic:baseline-arrow-back"
@@ -77,7 +77,7 @@
             title.value = '회원가입';
         } else if (currentPath === '/job-list') {
             title.value = '땅콩알바';
-        } else if (currentPath === '/job-detail') {
+        } else if (currentPath.startsWith('/job-detail')) {
             title.value = '상세보기';
         } else if (currentPath === '/job-post') {
             title.value = '구인등록'

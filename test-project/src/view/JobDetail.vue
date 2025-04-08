@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <section v-if="isLogin">
         <figure>
             <img src="https://placehold.co/640x360" alt="head image">
         </figure>
@@ -16,39 +16,51 @@
                 <span>&middot;</span>
                 {{post.location}}
             </p>
-            <!-- <p class="pay">{{post.pay_rule}} : <b>{{post.pay}}</b></p> -->
-            <p class="desc">{{ post.desc }}</p>
+            <!-- toLocaleString() :: 자바스크립트 천단위 표시 -->
+            <p class="pay">{{post.pay_rule}} : <b>{{post.pay.toLocaleString()}}원</b></p>
+            <textarea class="desc" rows="8" disabled :value="post.desc"></textarea>
         </div>
         <!-- 하단 고정 버튼 -->
-        <div class="bottom-btn-group">
+        <div class="bottom-btn-group" v-if="post && post.author === user.id">
+            <button class="btn-tel">수정</button>
+            <button class="btn-apply">삭제</button>
+        </div>
+        <div class="bottom-btn-group" v-else>
             <button class="btn-tel">전화문의</button>
             <button class="btn-apply">지원하기</button>
         </div>
-    </div>
+    </section>
 </template>
 <script setup>
     import supabase from '../supabase';
-    import {useRoute} from 'vue-router'
-    // LifeCycle Hook
+    import {useRoute, useRouter} from 'vue-router'
+    import {useAuth} from '../auth/auth.js'
     import { ref, onMounted } from 'vue';
-        
+    
+    const {isLogin, user, checkLoginStatus} = useAuth();
+    const router = useRouter();
     const route = useRoute();
     const id = route.params.id;
     const post = ref(null);
 
     onMounted( async() => {
-        const { data , error } = await supabase
-        .from('job_posts')
-        .select()
-        .eq('id', id)
-        .single()
+        await checkLoginStatus();
 
-        post.value = data;
+        if (user.value){
+            const { data, error } = await supabase
+            .from('job_posts')
+            .select()
+            .eq('id', id)
+            .single()
 
-        if (error) {
-            console.log("데이터없음");
-        } else {
-            console.log(data)
+            // single == 데이터를 배열이 아닌 하나의 객체로 받음
+            post.value = data;
+
+            if (error) {
+                console.log("데이터없음");
+            } else {
+                console.log(data)
+            }
         }
     })
 </script>
