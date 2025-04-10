@@ -12,7 +12,10 @@
             <h1>{{ title }}</h1>
             <router-link 
             v-if="
-            currentPath === '/' || currentPath === '/signup' || currentPath === '/job-post'"
+            currentPath === '/' || 
+            currentPath === '/signup' ||
+            currentPath.startsWith('/job-post-update') ||
+            currentPath === '/job-post'"
             to="/job-list"
             class="btn-close">
                 <Icon 
@@ -83,6 +86,8 @@
             title.value = '구인등록'
         } else if (currentPath === '/user-profile') {
             title.value = '프로필'
+        } else if (currentPath.startsWith('/job-post-update')) {
+            title.value = '구인등록 수정'
         }
     });
 

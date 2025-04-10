@@ -113,7 +113,7 @@
                     id="photo"
                     accept="image/*">
                 </div>
-                <button class="btn-submit">등록하기</button>
+                <button class="btn-submit">수정완료</button>
             </form>
         </div>
     </div>
@@ -126,9 +126,9 @@
     import {onUnmounted, ref} from 'vue';
     import { Icon } from '@iconify/vue'
     import { onMounted } from 'vue';
-    import { useRouter } from 'vue-router';
+    import { useRouter, useRoute } from 'vue-router';
 
-    // const router = useRouter()
+    // Data List
     const isLoading = ref(false)
     const title = ref('')
     const todo = ref('')
@@ -138,22 +138,28 @@
     const company_name = ref('')
     const location = ref('')
     const tel = ref('')
-    
-    const previewImage = ref(null);
-    
-    console.log(pay_rule.value)
 
-    // 반환 값 가져오기
-    const {isLogin, user, checkLoginStatus} = useAuth();
-
+    /** 
+     * Router :: 페이지 이동
+     * Route :: 현재 연결된 경로나 파라미터 등을 읽기 위해 사용
+     *  */ 
     const router = useRouter();
+    const route = useRoute();
+
+    // Post Data
+    const id = route.params.id;
+
+    const previewImage = ref(null);
+
+    // Auth Module Inject
+    const {isLogin, user, checkLoginStatus} = useAuth();
 
     const handleSubmit = async() => {
         isLoading.value = true;
 
         const { error } = await supabase
         .from('job_posts')
-        .insert({
+        .update({
             title : title.value,
             todo : todo.value,
             pay_rule : pay_rule.value,
@@ -164,23 +170,47 @@
             tel : tel.value,
             img_url: previewImage.value,
         })
+        .eq('id', id)
 
         if (error) {
             alert(error.message);
         } else {
             isLoading.value = false;
-            alert('등록이 완료되었습니다.');
+            alert('수정이 완료되었습니다.');
             router.push('/job-list');
+        }
+
+        isLoading.value = false;
+    }
+
+    const getPost = async() => {
+        const { data, error } = await supabase
+            .from('job_posts')
+            .select()
+            .eq('id', id)
+            .single()
+
+        if (error) {
+            console.log("데이터없음");
+        } else {
+            console.log(data)
+
+            // single == 데이터를 배열이 아닌 하나의 객체로 받음
+            title.value = data.title
+            todo.value = data.todo
+            pay_rule.value = data.pay_rule
+            pay.value = data.pay
+            desc.value = data.desc
+            company_name.value = data.company_name
+            location.value = data.location
+            tel.value = data.tel
         }
     }
 
-    // 마운트 시 로그인 확인 함수 가져오기 
-    // 해당 함수는 정의된 const 변수 값을 설정해주는 역할을 함
     onMounted( async() => {
         // 마운트 시 useAuth 내부의 checkLogin 실행
-        await checkLoginStatus();   
-        
-        pay_rule.value = '시급'; // 기본값 설정
+        await checkLoginStatus();
+        getPost();
     })
 
     // 페이지 종료 시
@@ -199,8 +229,6 @@
             previewImage.value = URL.createObjectURL(file);
         }
     }
-
-
 </script>
 
 <style lang="scss" scoped>

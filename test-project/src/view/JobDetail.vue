@@ -22,8 +22,8 @@
         </div>
         <!-- 하단 고정 버튼 -->
         <div class="bottom-btn-group" v-if="post && post.author === user.id">
-            <button class="btn-tel">수정</button>
-            <button class="btn-apply">삭제</button>
+            <router-link :to="`/job-post-update/${post.id}`" class="btn-tel">수정</router-link>
+            <button @click="handleDelete" class="btn-apply">삭제</button>
         </div>
         <div class="bottom-btn-group" v-else>
             <button class="btn-tel">전화문의</button>
@@ -63,8 +63,26 @@
             }
         }
     })
+
+    const handleDelete = async() => {
+        const conf = confirm('정말 삭제하시겠습니까?')
+
+        if (!conf) return;
+
+        const { error } = await supabase
+        .from('job_posts')
+        .delete()
+        .eq('id', id)
+
+        if (error) {
+            console.log(error.message)
+        } else {
+            alert('삭제가 완료되었습니다.')
+            router.push('/job-list')
+        }
+    }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
     figure {
     aspect-ratio: 16 / 9;
 
@@ -111,13 +129,16 @@
         width: 100%;
         display: flex;
     
-        button {
+        button, .btn-tel {
             width: 50%;
             border-radius: 0;
             padding-top: 14px;
             padding-bottom: 14px;
             margin: 0;
             cursor: pointer;
+            color: #fff;
+            text-align: center;
+            font-size: 15px;
         }
     
         .btn-tel {
