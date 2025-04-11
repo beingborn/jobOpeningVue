@@ -17,6 +17,7 @@
         </div>
         <button class="logout" @click="handleLogout">로그아웃</button>
     </div>
+    
 
 
 </template>

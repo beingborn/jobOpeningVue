@@ -25,9 +25,10 @@
             <router-link :to="`/job-post-update/${post.id}`" class="btn-tel">수정</router-link>
             <button @click="handleDelete" class="btn-apply">삭제</button>
         </div>
-        <div class="bottom-btn-group" v-else>
-            <button class="btn-tel">전화문의</button>
-            <button class="btn-apply">지원하기</button>
+        <div class="bottom-btn-group" v-else-if="post">
+            <!-- tel : href로 연결 시 전화로 자동 연결 -->
+            <a :href="`tel:${post.tel}`" class="btn-tel">전화문의</a>
+            <button @click="handleApply" class="btn-apply">지원하기</button>
         </div>
     </section>
 </template>
@@ -63,6 +64,23 @@
             }
         }
     })
+
+    const handleApply = async() => {
+        // 유저 데이터에서 이름 전화 번호 가져오기
+        const { data, error } = await supabase
+        .from('job_posts')
+        .select()
+        .eq('id', id)
+        .single()
+
+
+        // 지원내역 저장
+        // const { error } = await supabase.from('job_apply_list')
+
+
+        // 지원 저장 시 글목록 이동
+    }
+
 
     const handleDelete = async() => {
         const conf = confirm('정말 삭제하시겠습니까?')
