@@ -28,7 +28,8 @@
         <div class="bottom-btn-group" v-else-if="post">
             <!-- tel : href로 연결 시 전화로 자동 연결 -->
             <a :href="`tel:${post.tel}`" class="btn-tel">전화문의</a>
-            <button @click="handleApply" class="btn-apply">지원하기</button>
+            <button @click="handleApply" class="btn-apply" v-if="!isApplied">지원하기</button>
+            <button class="btn-apply-disable" v-else>지원완료</button>
         </div>
     </section>
 </template>
@@ -43,6 +44,7 @@
     const route = useRoute();
     const id = route.params.id;
     const post = ref(null);
+    const isApplied = ref(false);
 
     onMounted( async() => {
         await checkLoginStatus();
@@ -63,24 +65,64 @@
                 console.log(data)
             }
         }
+
+        // 지원내역 확인
+        checkApply();
     })
 
-    const handleApply = async() => {
-        // 유저 데이터에서 이름 전화 번호 가져오기
-        const { data, error } = await supabase
-        .from('job_posts')
+    // 지원 내역 확인   
+    const checkApply = async() => {
+        const { data , error} = await supabase
+        .from('job_apply_list')
         .select()
-        .eq('id', id)
-        .single()
+        .eq('applicant_id', user.value.id)
+        .eq('post_id', id);
 
+        if (error) {
+            alert('오류 발생');
+            return;
+        } 
 
-        // 지원내역 저장
-        // const { error } = await supabase.from('job_apply_list')
-
-
-        // 지원 저장 시 글목록 이동
+        if (data.length > 0) {
+            isApplied.value = true;
+        }
     }
 
+    const handleApply = async() => {
+
+        // 유저 데이터에서 이름 전화 번호 가져오기
+        const { data, error } = await supabase
+        .from('user_table')
+        .select()
+        .eq('id', user.value.id)
+        .single()
+
+        if (error) {
+            alert('오류가 발생했습니다');
+        } else {
+            console.log(data)
+        }
+
+        // 지원하기 저장하기
+        const {error: err} = await supabase
+        .from('job_apply_list')
+        .insert({
+            job_title: post.value.title, // 글 제목
+            employer_id: post.value.author, // 고용주 : 글 작성자 ID
+            applicant_id: user.value.id,  // 지원자 : 현재 로그인한 사용자 ID
+            applicant_tel : data.tel, // 지원자 : 현재 로그인한 사용자 이름
+            applicant_name : data.name, // 지원자 : 현재 로그인한 사용자 전화번호
+            post_id: post.value.id, // 고용주가 게시한 글 ID
+        })
+
+        if (err) {
+            alert('지원이 되지 않았습니다.')
+        } else {
+            alert('지원내역이 저장되었습니다.')
+            // 지원 저장 시 글목록 이동
+            router.push('/job-list')
+        }
+    }
 
     const handleDelete = async() => {
         const conf = confirm('정말 삭제하시겠습니까?')
@@ -165,6 +207,10 @@
     
         .btn-apply {
             background-color: var(--main-color-light);
+        }
+
+        .btn-apply-disable {
+            background-color: #ccc;
         }
     }
 </style>

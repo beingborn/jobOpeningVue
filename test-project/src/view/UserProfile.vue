@@ -1,6 +1,4 @@
 <template>
-
-
     <div class="form-container" v-if="isLogin">
         <div class="top-info-box">
             <img src="/vite.svg" alt="profile">
@@ -16,23 +14,74 @@
             </p>
         </div>
         <button class="logout" @click="handleLogout">로그아웃</button>
+        <details class="job-list" v-if="job_apply_list.length > 0">
+            <summary>내 지원내역</summary>
+            <p v-for="job in job_apply_list" :key="job.id">
+                <router-link :to="`/job-detail/${job.post_id}`">
+                    <span>[지원완료] {{ job.job_title }}</span>
+                    <time datetime="">{{ new Date(job.created_at).toLocaleDateString() }}</time>
+                </router-link>
+            </p>
+        </details>
+        <details class="job-list" v-if="job_recieve_list.length > 0">
+            <summary>받은 지원내역</summary>
+            <p v-for="job in job_recieve_list" :key="job.id">
+                <router-link :to="`/job-detail/${job.post_id}`">
+                    <span>{{ job.applicant_name  }} <q>{{ job.job_title }}에 지원했습니다.</q></span>
+                    <time datetime="">{{ new Date(job.created_at).toLocaleDateString() }}</time>
+                </router-link>
+            </p>
+        </details>
     </div>
-    
-
-
 </template>
 <script setup>
+    import { useAuth } from '../auth/auth';
     import supabase from '../supabase';
     
     // LifeCycle Hook
     import { ref, onMounted } from 'vue';
     import { useRouter } from 'vue-router'
 
+    const {isLogin, user, checkLoginStatus} = useAuth();
+
     const router = useRouter()
-    const isLogin = ref(false)
+
+    // 소개 정보
     const name = ref('')
     const addr = ref('')
     const text = ref('')
+
+    // 지원 내역
+    const job_apply_list = ref([]);
+    const job_recieve_list = ref([]);
+
+    // 받은 지원내역 가져오는 함수
+    const getRecieveList = async() => {
+        const {data, error} = await supabase
+        .from('job_apply_list')
+        .select()
+        .eq('employer_id', user.value.id)
+
+        if (error) {
+            alert('받은 지원내역 가져오기 실패');
+        } else {
+            job_recieve_list.value = data;
+            console.log(job_recieve_list.value)
+        }
+    }
+
+    const getApplyList = async() => {
+        const { data, error } = await supabase
+        .from('job_apply_list')
+        .select()
+        .eq('applicant_id', user.value.id)
+
+        if(error) {
+            alert('지원내역 가져오기 실패');
+        } else {
+            job_apply_list.value = data;
+        }
+    }
 
     const handleLogout = async () => {
         const { error } = await supabase.auth.signOut()
@@ -47,30 +96,26 @@
 
     // 마운트시 로그인 상태 확인
     onMounted(async()=> {
-        // 로그인 하지 않은 경우 Null 반환
-        const { data: {user} } = await supabase.auth.getUser()
+        await checkLoginStatus();
+        await getApplyList();
+        await getRecieveList();
 
-        if (user) {
-            console.log('로그인')
-            isLogin.value = true
+        const { data, error } = await supabase
+        .from('user_table')
+        .select()
+        .eq('id', user.value.id)
+        .single()
 
-            // user 정보 가져오기
-            // eq('칼럼명', '값') : 특정 조건의 자료를 선택하는 함수
-            const { data, error } = await supabase
-                .from('user_table')
-                .select()
-                .eq('id', user.id) // userID 값과 동일한 요소 뽑아오기
-
-            name.value = data[0].name;
-            addr.value = data[0].address;
-            text.value = data[0].text;
-
+        if (error) {
+            console.log('데이터 이상함')
         } else {
-            console.log('로그아웃')
-            isLogin.value = false
-            alert('로그인 후 이용해주세요.')
-            router.push('/')
+            name.value = data.name;
+            addr.value = data.addr;
+            text.value = data.text;
         }
+
+        
+
     })
 
 </script>

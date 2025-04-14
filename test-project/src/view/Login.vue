@@ -3,7 +3,6 @@
         <div class="loading-info" v-if="isLoading === true">
             <p>로그인 처리중...</p>
         </div>
-        <h1>login</h1>
         <div class="form-container">
             <!-- 
             Submit Event => Login() 
