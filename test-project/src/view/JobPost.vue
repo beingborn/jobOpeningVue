@@ -138,11 +138,11 @@
     const company_name = ref('')
     const location = ref('')
     const tel = ref('')
-    
+    const img_url = ref('');
     const previewImage = ref(null);
-    
-    console.log(pay_rule.value)
 
+    let file = null; // 파일 객체 저장 변수
+        
     // 반환 값 가져오기
     const {isLogin, user, checkLoginStatus} = useAuth();
 
@@ -150,6 +150,10 @@
 
     const handleSubmit = async() => {
         isLoading.value = true;
+
+        if(previewImage.value.length){
+            await uploadImage();
+        }
 
         const { error } = await supabase
         .from('job_posts')
@@ -162,7 +166,7 @@
             company_name : company_name.value,
             location : location.value,
             tel : tel.value,
-            img_url: previewImage.value,
+            img_url: img_url.value,
         })
 
         if (error) {
@@ -193,14 +197,38 @@
     })
 
     const onFileChange = (event) => {
-        const file = event.target.files[0];
+        file = event.target.files[0];
 
         if (file) {
             previewImage.value = URL.createObjectURL(file);
         }
     }
 
+    const uploadImage = async() => {
+        // Upload Variable, File, Option
+        const { data, error } = await supabase
+        .storage
+        .from('images')
+        .upload(file.name, file, {
+            cacheControl: '3600',
+            upsert: false
+        })
 
+        if(error){
+            alert('업로드 오류');
+        } else {
+            console.log('uploaded file:', data)
+            // 이미지 URL 가져오기
+            const {data : imgData} = supabase
+            .storage
+            .from('images')
+            .getPublicUrl(file.name)
+
+            console.log(imgData.publicUrl)
+            // 테이블에 저장할 변수
+            img_url.value = imgData.publicUrl;
+        }
+    }
 </script>
 
 <style lang="scss" scoped>

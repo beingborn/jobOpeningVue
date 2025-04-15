@@ -138,6 +138,10 @@
     const company_name = ref('')
     const location = ref('')
     const tel = ref('')
+    const img_url = ref(null)
+    const prev_img_url = ref('') // 이전 이미지 url
+
+    let file = null; // 파일 객체 저장 변수
 
     /** 
      * Router :: 페이지 이동
@@ -157,6 +161,24 @@
     const handleSubmit = async() => {
         isLoading.value = true;
 
+        if(previewImage.value.length){
+            console.log(prev_img_url.value)
+
+            // 기존 이미지 파일과 다른 경우 
+            if (!prev_img_url.value.includes(file.name)){
+                await uploadImage();
+
+                // 기존 이미지 삭제
+                const {data, error} = await supabase
+                .storage
+                .from('images')
+                .remove([prev_img_url.value])
+
+            } else {
+
+            }
+        }
+
         const { error } = await supabase
         .from('job_posts')
         .update({
@@ -168,7 +190,7 @@
             company_name : company_name.value,
             location : location.value,
             tel : tel.value,
-            img_url: previewImage.value,
+            img_url: img_url.value,
         })
         .eq('id', id)
 
@@ -204,6 +226,34 @@
             company_name.value = data.company_name
             location.value = data.location
             tel.value = data.tel
+            previewImage.value = data.img_url
+            prev_img_url.value = data.img_url
+        }
+    }
+
+    const uploadImage = async() => {
+        // Upload Variable, File, Option
+        const { data, error } = await supabase
+        .storage
+        .from('images')
+        .upload(file.name, file, {
+            cacheControl: '3600',
+            upsert: false
+        })
+
+        if(error){
+            alert('업로드 오류');
+        } else {
+            console.log('uploaded file:', data)
+            // 이미지 URL 가져오기
+            const {data : imgData} = supabase
+            .storage
+            .from('images')
+            .getPublicUrl(file.name)
+
+            console.log(imgData.publicUrl)
+            // 테이블에 저장할 변수
+            img_url.value = imgData.publicUrl;
         }
     }
 
@@ -211,6 +261,8 @@
         // 마운트 시 useAuth 내부의 checkLogin 실행
         await checkLoginStatus();
         getPost();
+
+
     })
 
     // 페이지 종료 시
@@ -223,7 +275,7 @@
     })
 
     const onFileChange = (event) => {
-        const file = event.target.files[0];
+        file = event.target.files[0];
 
         if (file) {
             previewImage.value = URL.createObjectURL(file);

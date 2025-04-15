@@ -1,5 +1,6 @@
 <template>
     <div class="form-container" v-if="isLogin">
+
         <div class="top-info-box">
             <img src="/vite.svg" alt="profile">
             <div class="right-info">
@@ -14,6 +15,7 @@
             </p>
         </div>
         <button class="logout" @click="handleLogout">로그아웃</button>
+
         <details class="job-list" v-if="job_apply_list.length > 0">
             <summary>내 지원내역</summary>
             <p v-for="job in job_apply_list" :key="job.id">
@@ -23,6 +25,7 @@
                 </router-link>
             </p>
         </details>
+
         <details class="job-list" v-if="job_recieve_list.length > 0">
             <summary>받은 지원내역</summary>
             <p v-for="job in job_recieve_list" :key="job.id">
@@ -120,62 +123,93 @@
 
 </script>
 <style lang="scss" scoped>
-    button {
+    // 버튼 디자인 수정
+    button { 
         background: transparent;
         color: var(--main-color);
         font-size: 16px;
         margin-top: 40px;
-        
-        &:hover {
-            opacity: 0.7;
-            text-decoration: underline;
+        &:hover{
+        opacity: 0.7;
+        text-decoration: underline;
         }
-    }
+    }  
+
     .form-container {
-    margin-top: 20px;
+        margin-top: 20px;
     }
 
     .top-info-box {
-    display: flex;
-    align-items: center;
-    margin-bottom: 40px;
+        display: flex;
+        align-items: center;
+        margin-bottom: 40px;
 
-    img {
+        img {
         width: 40px;
         height: 40px;
         border-radius: 50%;
         margin-right: 12px;
-    }
+        }
 
-    .right-info {
+        .right-info {
         width: 100%;
         line-height: 1.4;
-
+    
         .name {
-        font-size: 16px;
-        font-weight: 600;
+            font-size: 16px;
+            font-weight: 600;
         }
         address {
-        font-size: 14px;
-        font-weight: 400;
-        font-style: normal;
-        color: #777;
+            font-size: 14px;
+            font-weight: 400;
+            font-style: normal;
+            color: #777;
         }
-    }
+        }
     }
 
     .text-info {
-    margin-bottom: 25px;
-    h4 {
+        margin-bottom: 25px;
+        h4 {
         margin-bottom: 8px;
-    }
-    p {
+        }
+        p {
         font-size: 14px;
         color: #333;
         line-height: 20px;
         border: 1px solid #d9d9d9;
         border-radius: 8px;
         padding: 12px 1rem;
+        }
     }
+
+    .job-list {
+        list-style-type: none;
+        font-size: 14px;
+        padding: 1rem 0;
+        
+        summary {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #d9d9d9;
+        }
+
+        p {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        time {
+            color: #777;
+            font-size: 12px;
+            font-weight: 400;
+            width: 10em;
+            // outline: 1px solid red;
+            text-align: right;
+        }
+        }
+
+        q { font-weight: bold;}
     }
 </style>
