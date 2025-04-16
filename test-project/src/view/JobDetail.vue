@@ -124,10 +124,27 @@
         }
     }
 
+    // 이미지 삭제 함수 
+    const deleteImage = async () => {
+        if(post.value.img_url) {
+            const { data, error } = await supabase
+            .storage
+            .from('images')
+            .remove([prev_img_url.value.split('/').pop()])
+
+            if(error) {
+                console.log(error.message)
+            }
+        }
+    }
+
+    // 글 삭제 함수
     const handleDelete = async() => {
         const conf = confirm('정말 삭제하시겠습니까?')
 
         if (!conf) return;
+
+        await deleteImage();
 
         const { error } = await supabase
         .from('job_posts')

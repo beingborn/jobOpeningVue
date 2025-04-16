@@ -172,10 +172,18 @@
                 const {data, error} = await supabase
                 .storage
                 .from('images')
-                .remove([prev_img_url.value])
+                .remove([prev_img_url.value.split('/').pop()])
+
+                if (error) {
+                    alert(error.message)
+                } else {
+                    alert('성공')
+                }
 
             } else {
-
+                // 파일 미첨부 시 기존 이미지 사용
+                img_url.value = prev_img_url.value;
+                console.log('기존 이미지 사용')
             }
         }
 
