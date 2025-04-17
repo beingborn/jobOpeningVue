@@ -1,7 +1,8 @@
 <template>
-    <section v-if="isLogin">
-        <figure>
-            <img src="https://placehold.co/640x360" alt="head image">
+    <!-- 로그인 상태 확인 + Post 생성 시 렌더링 -->
+    <section v-if="isLogin && post">
+        <figure v-if="post.img_url">
+            <img :src="post.img_url" alt="head image">
         </figure>
         <!-- 
             v-if post를 해주지 않으면 DOM이 먼저 그려지기 때문에
@@ -9,7 +10,7 @@
         -->
 
         <!-- 상세정보 -->
-        <div class="container" v-if="post">
+        <div class="container">
             <h2>{{post.title}}</h2>
             <p class="top_info">
                 {{post.company_name}}
@@ -21,11 +22,11 @@
             <textarea class="desc" rows="8" disabled :value="post.desc"></textarea>
         </div>
         <!-- 하단 고정 버튼 -->
-        <div class="bottom-btn-group" v-if="post && post.author === user.id">
+        <div class="bottom-btn-group" v-if="post.author === user.id">
             <router-link :to="`/job-post-update/${post.id}`" class="btn-tel">수정</router-link>
             <button @click="handleDelete" class="btn-apply">삭제</button>
         </div>
-        <div class="bottom-btn-group" v-else-if="post">
+        <div class="bottom-btn-group" v-else>
             <!-- tel : href로 연결 시 전화로 자동 연결 -->
             <a :href="`tel:${post.tel}`" class="btn-tel">전화문의</a>
             <button @click="handleApply" class="btn-apply" v-if="!isApplied">지원하기</button>

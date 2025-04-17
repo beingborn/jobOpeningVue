@@ -151,7 +151,9 @@
     const handleSubmit = async() => {
         isLoading.value = true;
 
-        if(previewImage.value.length){
+        console.log(previewImage.value)
+
+        if (previewImage.length){
             await uploadImage();
         }
 
